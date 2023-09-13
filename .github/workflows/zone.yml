@@ -93,18 +93,18 @@ jobs:
              echo "Validation and planning succeeded."
              # Create or update the commit status using the GitHub REST API
              echo "github token: ${{ env.GITHUB_TOKEN }}"
-             OWNER="malyadr"
-             REPO="${{ github.repository }}"
-             STATE="success"
-             DESCRIPTION="Validation passed"
-             CONTEXT="Terraform plan"
+             #  OWNER="malyadr"
+              #  REPO="${{ github.repository }}"
+              #  STATE="success"
+              #  DESCRIPTION="Validation passed"
+              #  CONTEXT="Terraform plan"
              curl -X POST "https://api.github.com/repos/$OWNER/$REPO/statuses/${{ github.sha }}" \
-               -H "Authorization: token ${{ env.GITHUB_TOKEN }}" \
+               -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
                -H "Content-Type: application/json" \
                -d '{
-               "state": "'$STATE'",
-               "description": "'$DESCRIPTION'",
-               "context": "'$CONTEXT'"
+               "state": "success",
+               "description": "Validation passed",
+               "context": "Terraform plan"
               }'
 
 
