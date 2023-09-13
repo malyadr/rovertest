@@ -87,4 +87,25 @@ jobs:
               echo "::set-output name=status::failure"
             fi 
 
+        - name: Set PR Status
+          env:
+            OWNER="malyadr"
+            REPO="${{ github.repository }}"
+            STATE="success"
+            DESCRIPTION="Validation passed"
+            CONTEXT="Terraform plan"
+          if: steps.plan_results.outputs.status == 'success'  # Only run if plan succeeded
+          run: |
+             echo "Validation and planning succeeded."
+             # Create or update the commit status using the GitHub REST API
+             echo "github token: ${{ env.GITHUB_TOKEN }}"
+             curl -X POST "https://api.github.com/repos/$OWNER/$REPO/statuses/${{ github.sha }}" \
+               -H "Authorization: token ${{ env.GITHUB_TOKEN }}" \
+               -H "Content-Type: application/json" \
+               -d '{
+               "state": "'$STATE'",
+               "description": "'$DESCRIPTION'",
+               "context": "'$CONTEXT'"
+              }'
+
 
