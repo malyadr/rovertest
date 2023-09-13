@@ -1,0 +1,82 @@
+name: Landingzone test 
+
+on:
+  workflow_dispatch:
+  pull_request: 
+    types: ["opened","synchronize"]
+    paths-ignore:
+      - '.devcontainer/**'  
+  
+env:
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ROVER_RUNNER: true     
+
+jobs: 
+  validate_and_plan: 
+
+      name: validate_and_plan 
+      runs-on: ubuntu-latest 
+
+      strategy:
+        matrix:
+          config_files: [
+            "landingzone/"
+          ]
+
+      container: 
+         image: aztfmod/rover:1.5.4-2307.2804
+         options: --user 0  
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3  
+
+        - name: login into azure 
+          run: | 
+             az login --service-principal -u '${{ env.ARM_CLIENT_ID }}' -p '${{ env.ARM_CLIENT_SECRET }}' --tenant '${{ env.ARM_TENANT_ID }}'
+             az account set -s  ${{ env.ARM_SUBSCRIPTION_ID }}
+        
+        - name: Run Azure Rover validate 
+          id: check_results
+          run: | 
+            /tf/rover/rover.sh -lz  ${GITHUB_WORKSPACE}/${{ matrix.config_files }} -a validate \
+              -launchpad \
+              -var-folder ${GITHUB_WORKSPACE}/landingzone \
+              -level level0 \
+              --environment ${{ github.run_id }} \
+              -skip-permission-check \
+              '-var prefix=g${{ github.run_id }}' \
+              '-var tags={testing_job_id="${{ github.run_id }}"}'
+
+            if [ $? -eq 0 ]; then
+              echo "Validation passed."
+              echo "::set-output name=status::success"
+            else
+              echo "Validation failed."
+              echo "::set-output name=status::failure"
+            fi
+       
+        - name: Run Azure Rover Plan
+          id: plan_results
+          if: steps.check_results.outputs.status == 'success'  # Only run if validation succeeded
+          run: |
+            # Run Azure Rover planning
+            /tf/rover/rover.sh -lz  ${GITHUB_WORKSPACE}/${{ matrix.config_files }} -a plan \
+              -launchpad \
+              -var-folder ${GITHUB_WORKSPACE}/landingzone \
+              -level level0 \
+              --environment ${{ github.run_id }} \
+              -skip-permission-check \ 
+            # Check if Azure Rover validation passed or failed
+            if [ $? -eq 0 ]; then
+              echo "plan passed."
+              echo "::set-output name=status::success"
+            else
+              echo "plan failed."
+              echo "::set-output name=status::failure"
+            fi 
+
+
