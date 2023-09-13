@@ -98,7 +98,7 @@ jobs:
               #  STATE="success"
               #  DESCRIPTION="Validation passed"
               #  CONTEXT="Terraform plan"
-             curl -X POST "https://api.github.com/repos/$OWNER/$REPO/statuses/${{ github.sha }}" \
+             curl -X POST "https://api.github.com/repos/malyadr/${{ github.repository }}/statuses/${{ github.sha }}" \
                -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
                -H "Content-Type: application/json" \
                -d '{
