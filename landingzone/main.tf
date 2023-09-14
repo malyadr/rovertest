@@ -76,4 +76,4 @@ resource "azurerm_storage_encryption_scope" "blob_encryption" {
     storage_account_id = azurerm_storage_account.storage_account.id
     name = "default"
     source = "Microsoft.Storage"
-}
+    }
