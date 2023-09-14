@@ -131,3 +131,9 @@ jobs:
                "description": "Validation passed",
                "context": "Terraform plan"
               }'
+
+
+  on-merge: 
+    needs: [validate_and_plan]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged
