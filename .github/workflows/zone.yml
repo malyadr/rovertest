@@ -133,6 +133,10 @@ jobs:
               }'
 
         - name: merge PR 
-          if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged 
+          if: steps.plan_results.outputs.status == 'success'
           run: |
-            echo "PR has been merged."
+             PR_NUMBER= ${{ github.event.number }}
+
+             curl -X PUT -H "Authorization: token ${{ env.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/merge"
