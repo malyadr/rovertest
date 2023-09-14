@@ -98,7 +98,7 @@ jobs:
               github.rest.repos.createCommitStatus({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                sha: github.sha,
+                sha: ${{ github.sha }},
                 state: 'success',
                 description: 'Plan passed',
                 context: 'Terraform Plan'
