@@ -90,19 +90,6 @@ jobs:
               echo "::set-output name=status::failure"
             fi 
         
-        # - name: Set PR Status
-        #   if: steps.plan_results.outputs.status == 'success'  # Only run if plan succeeded
-        #   uses: actions/github-script@v6
-        #   with:
-        #     script: |
-        #       github.rest.repos.createCommitStatus({
-        #         owner: context.repo.owner,
-        #         repo: context.repo.repo,
-        #         sha: ${{ github.event.after }},
-        #         state: 'success',
-        #         description: 'Plan passed',
-        #         context: 'Terraform Plan'
-        #       })
         - name: Set PR Status
           if: steps.plan_results.outputs.status == 'success'  # Only run if plan succeeded
           run: |
@@ -124,3 +111,23 @@ jobs:
                "context": "Terraform plan"
               }'
 
+        - name: Set PR Status
+          if: steps.plan_results.outputs.status == 'failure'  # Only run if plan succeeded
+          run: |
+             echo "Validation and planning succeeded."
+             # Create or update the commit status using the GitHub REST API
+             echo "github token: ${{ env.GITHUB_TOKEN }}"
+             #  OWNER="malyadr"
+              #  REPO="${{ github.repository }}"
+              #  STATE="success"
+              #  DESCRIPTION="Validation passed"
+              #  CONTEXT="Terraform plan"
+             echo "github.event.after=${{ github.event.after }}"
+             curl -X POST "https://api.github.com/repos/malyadr/rovertest/statuses/${{ github.event.after}}" \
+               -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
+               -H "Content-Type: application/json" \
+               -d '{
+               "state": "failure",
+               "description": "Validation passed",
+               "context": "Terraform plan"
+              }'
