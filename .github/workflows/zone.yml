@@ -3,7 +3,7 @@ name: Landingzone test
 on:
   workflow_dispatch:
   push: 
-    branch: 
+    branches: 
       - main
   pull_request: 
     types: ["opened","synchronize"]
@@ -99,13 +99,13 @@ jobs:
               #  STATE="success"
               #  DESCRIPTION="Validation passed"
               #  CONTEXT="Terraform plan"
-             curl -X POST "https://api.github.com/repos/malyadr/${{ github.repository }}/statuses/${{ github.sha }}" \
-               -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
+             echo "github.sha=${{ github.sha }}"
+             curl -X POST "https://api.github.com/repos/malyadr/rovertest/statuses/${{ github.sha }}" \
+               -H "Authorization: Bearer ${{ GITHUB_TOKEN }}" \
                -H "Content-Type: application/json" \
                -d '{
                "state": "success",
                "description": "Validation passed",
                "context": "Terraform plan"
               }'
-
 
