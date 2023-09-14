@@ -101,7 +101,7 @@ jobs:
               #  CONTEXT="Terraform plan"
              echo "github.sha=${{ github.sha }}"
              curl -X POST "https://api.github.com/repos/malyadr/rovertest/statuses/${{ github.sha }}" \
-               -H "Authorization: Bearer ${{ GITHUB_TOKEN }}" \
+               -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
                -H "Content-Type: application/json" \
                -d '{
                "state": "success",
