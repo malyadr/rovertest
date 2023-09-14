@@ -5,8 +5,8 @@ on:
   push: 
     branch: 
       - main
-  # pull_request: 
-  #   types: ["opened","synchronize"]
+  pull_request: 
+    types: ["opened","synchronize"]
     paths-ignore:
       - '.devcontainer/**'  
   
