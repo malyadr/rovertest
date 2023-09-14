@@ -137,3 +137,10 @@ jobs:
     needs: [validate_and_plan]
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 
+      - name: Actions upon PR Merge
+        run: |
+          echo "PR has been merged."
