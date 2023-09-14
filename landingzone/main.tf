@@ -52,7 +52,7 @@ resource "azurerm_storage_account" "storage_account" {
   account_tier             = var.sku_name
   account_replication_type = var.replication_type
 
-  taging = {
+  tags = {
     name = "malyadri"
   }
 
