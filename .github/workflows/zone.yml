@@ -135,8 +135,8 @@ jobs:
         - name: merge PR 
           if: steps.plan_results.outputs.status == 'success'
           run: |
-             PR_NUMBER= ${{ github.event.number }}
+             PR_NUMBER=${{ github.event.number }}
 
              curl -X PUT -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/rovertest/pulls/$PR_NUMBER/merge"
+              "https://api.github.com/repos/malyadr/rovertest/pulls/$PR_NUMBER/merge"
